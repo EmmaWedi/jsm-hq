@@ -9,7 +9,11 @@ const KEY = "jsmhq.sound";
 /** Two agents asking within this window ring once. */
 const COOLDOWN_MS = 3000;
 
+/** The choice made in this page, so it holds even if localStorage can't store it (until reload). */
+let chosen: boolean | null = null;
+
 export function soundEnabled(): boolean {
+  if (chosen !== null) return chosen;
   try {
     return localStorage.getItem(KEY) !== "off";
   } catch {
@@ -18,10 +22,11 @@ export function soundEnabled(): boolean {
 }
 
 export function setSoundEnabled(on: boolean) {
+  chosen = on;
   try {
     localStorage.setItem(KEY, on ? "on" : "off");
   } catch {
-    /* private window: applies until reload */
+    /* storage blocked or full: `chosen` keeps it until reload */
   }
 }
 
